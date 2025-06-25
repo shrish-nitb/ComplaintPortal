@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  CASEHANDLER
+  WARDMEMBER
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  mobile    String   @unique
+  role      Role
+  password  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  applicationEdits ApplicationStatus[] @relation("ApplicationStatusToEditor")
+  caseEdits        CaseStatus[]        @relation("CaseStatusToEditor")
+  resolvedEdits    ResolvedStatus[]    @relation("ResolvedStatusToEditor")
+  caseMember       CaseStatus[]        @relation("CaseStatusToMember")
+  resolvedMember   ResolvedStatus[]    @relation("ResolvedStatusToMember")
+}
+
+model Application {
+  applicationId            Int                 @id @default(autoincrement())
+  referenceId              String              @unique
+  title                    String?
+  subject                  String?
+  type                     String?
+  description              String?
+  plantiffName             String?
+  plantiffAddress          String?
+  plantiffWardNumber       Int?                  
+  plantiffMobile           String?
+  plantiffEmail            String?
+  plantiffCitizenshipId    String?
+  plantiffFatherName       String?
+  plantiffGrandfatherName  String?
+  defendantName            String?
+  defendantAddress         String?
+  defendantWardNumber      Int?                  
+  defendantMobile          String?
+  defendantEmail           String?
+  defendantCitizenshipId   String?
+  defendantFatherName      String?
+  defendantGrandfatherName String?
+
+  createdAt                DateTime             @default(now())
+  updatedAt                DateTime             @updatedAt           
+
+  applicationStatus        ApplicationStatus[]  @relation("ApplicationToApplicationStatus")
+  caseStatus               CaseStatus[]         @relation("ApplicationToCaseStatus")
+  resolvedStatus           ResolvedStatus[]     @relation("ApplicationToResolvedStatus")
+
+}
+
+model ApplicationStatus {
+  applicationStatusId Int       @id @default(autoincrement())
+  referenceId          String
+  status               String?
+  comment              String?
+  editorId             Int
+
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt   
+
+  editor               User      @relation("ApplicationStatusToEditor", fields: [editorId], references: [id])     
+  application          Application  @relation("ApplicationToApplicationStatus", fields: [referenceId], references: [referenceId], onDelete: Cascade)
+
+}
+
+model CaseStatus {
+  caseStatusId     Int       @id @default(autoincrement())
+  referenceId      String
+  status           String?
+  comment          String?
+  editorId         Int
+
+  hearingTime      DateTime?
+  hearingLocation  String?
+  memberId         Int
+
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  editor           User      @relation("CaseStatusToEditor", fields: [editorId], references: [id])
+  member           User      @relation("CaseStatusToMember", fields: [memberId], references: [id]) 
+  application      Application  @relation("ApplicationToCaseStatus", fields: [referenceId], references: [referenceId], onDelete: Cascade)
+
+}
+
+model ResolvedStatus {
+  resolvedStatusid Int        @id @default(autoincrement())
+  referenceId     String
+  status          String?
+  comment         String?
+  editorId        Int
+
+  hearingTime     DateTime?
+  hearingLocation String?
+  memberId        Int
+
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  editor           User      @relation("ResolvedStatusToEditor", fields: [editorId], references: [id])
+  member           User      @relation("ResolvedStatusToMember", fields: [memberId], references: [id]) 
+  application      Application  @relation("ApplicationToResolvedStatus", fields: [referenceId], references: [referenceId], onDelete: Cascade)
+
+}

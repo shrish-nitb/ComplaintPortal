@@ -1,0 +1,33 @@
+# Node modules
+backend/node_modules/
+
+# Environment variables
+backend/.env
+
+# Prisma generated files
+backend/prisma/dev.db
+backend/prisma/dev.db-journal
+backend/prisma/migrations/
+backend/prisma/generated/
+backend/src/generated/prisma/
+
+# Build output (if using any)
+backend/dist/
+backend/build/
+
+# Logs
+backend/npm-debug.log*
+backend/yarn-debug.log*
+backend/yarn-error.log*
+backend/pnpm-debug.log*
+
+# Optional: OS-specific
+backend/.DS_Store
+backend/Thumbs.db
+
+# Optional: temp files
+backend/temp/
+backend/*.old
+
+# Ignore VSCode settings (if personal)
+backend/.vscode/
