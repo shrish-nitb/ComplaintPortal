@@ -1,4 +1,4 @@
-cd backend
-cp .env.example .env
-npx prisma generate
-npm start
+cd backend \n
+cp .env.example .env \n
+npx prisma generate \n
+npm start \n
